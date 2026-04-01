@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -25,8 +26,8 @@ interface WebSocketMessage {
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private ws: WebSocket | null = null;
-  private wsUrl = 'ws://127.0.0.1:8000/ws/chat/';
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private wsUrl = environment.wsUrl;
+  private apiUrl = environment.apiUrl;
   private messageSubject = new Subject<{ type: string; content: string }>();
 
   constructor(private http: HttpClient) {
