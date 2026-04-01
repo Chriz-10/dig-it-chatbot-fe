@@ -1,0 +1,132 @@
+<div class="main-container">
+  <div class="chat-container">
+    <div class="header">
+      <h1><img src="icon.png" alt="DiG iT" class="logo-icon"> DiG iT</h1>
+      <div class="header-actions">
+        <button mat-icon-button (click)="startNewChat()" class="new-chat-btn" title="New Chat">
+          <i class="fas fa-plus-circle"></i>
+        </button>
+        <button mat-icon-button (click)="toggleHistory()" class="toggle-history-btn" title="Chat History">
+          <i class="fas fa-history"></i>
+        </button>
+      </div>
+    </div>
+    <div class="messages-wrapper" #messagesWrapper (mousemove)="onMouseMove()" (scroll)="onScroll()">
+      <!-- Empty State / Welcome Message -->
+      <div class="empty-state" *ngIf="messages.length === 0">
+        <div class="empty-state-content">
+          <div class="welcome-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h2>Welcome to DiG iT AI Chat</h2>
+          <p class="subtitle">Your intelligent assistant powered by RayyianAI</p>
+          
+          <div class="features">
+            <div class="feature-item">
+              <i class="fas fa-bolt"></i>
+              <span>Fast & Intelligent responses</span>
+            </div>
+            <div class="feature-item">
+              <i class="fas fa-comments"></i>
+              <span>Natural conversations</span>
+            </div>
+            <div class="feature-item">
+              <i class="fas fa-history"></i>
+              <span>Saved chat history</span>
+            </div>
+          </div>
+          
+          <div class="getting-started">
+            <p class="prompt-label"><i class="fas fa-lightbulb"></i> Try asking something like:</p>
+            <div class="example-prompts">
+              <div class="prompt-chip" (click)="useExamplePrompt('Write a Python function')">
+                <i class="fas fa-code"></i> "Write a Python function"
+              </div>
+              <div class="prompt-chip" (click)="useExamplePrompt('Explain quantum computing')">
+                <i class="fas fa-question-circle"></i> "Explain quantum computing"
+              </div>
+              <div class="prompt-chip" (click)="useExamplePrompt('Help me write an email')">
+                <i class="fas fa-pen"></i> "Help me write an email"
+              </div>
+              <div class="prompt-chip" (click)="useExamplePrompt('Solve a math problem')">
+                <i class="fas fa-brain"></i> "Solve a math problem"
+              </div>
+            </div>
+          </div>
+          
+          <div class="start-prompt">
+            <i class="fas fa-arrow-down"></i>
+            <p>Type your message below to start chatting</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Chat Messages -->
+      <div class="messages">
+        <div *ngFor="let msg of messages" [ngClass]="msg.role" class="message">
+          <div class="message-content">
+            <div *ngIf="msg.isLoading" class="loading-dots">
+              Thinking<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+            </div>
+            <div *ngIf="!msg.isLoading && msg.streaming" class="streaming-text">{{ msg.content }}<span class="cursor-blink">|</span></div>
+            <div *ngIf="!msg.isLoading && !msg.streaming" markdown [data]="msg.content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="input-area-wrapper">
+      <div class="input-area">
+        <mat-form-field class="input-field" appearance="outline">
+          <i class="fas fa-comments input-icon" matPrefix></i>
+          <input matInput [(ngModel)]="userInput" placeholder="Ask anything..." (keyup.enter)="!isStreaming && sendMessage()" [disabled]="isStreaming">
+        </mat-form-field>
+        <button mat-fab color="primary" (click)="handleButtonClick()" [disabled]="!isStreaming && !userInput.trim()" class="send-btn" [class.interrupt-btn]="isStreaming">
+          <i *ngIf="!isStreaming" class="fa-solid fa-circle-chevron-right"></i>
+          <i *ngIf="isStreaming" class="fa-solid fa-stop-circle"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="history-panel" [class.open]="!historyCollapsed">
+    <div class="history-header">
+      <h2><i class="fas fa-history"></i> Chat History</h2>
+      <div class="history-header-actions">
+        <button mat-icon-button (click)="loadChatHistory()" class="refresh-btn"  title="Refresh">
+          <i class="fas fa-sync-alt" ></i>
+        </button>
+        <button mat-icon-button (click)="toggleHistory()" class="close-history-btn" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="history-content">
+      <!-- <div *ngIf="loadingHistory" class="loading-history">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div> -->
+      
+      <div *ngIf="!loadingHistory && chatHistories.length === 0" class="no-history">
+        <i class="fas fa-comments"></i>
+        <p>No chat history yet</p>
+        <small>Start a conversation to see it here</small>
+      </div>
+
+      <div class="history-list" *ngIf="chatHistories.length > 0">
+        <div *ngFor="let history of chatHistories" class="history-item" (click)="loadChat(history)">
+          <div class="history-item-icon">
+            <i class="fas fa-comment-dots"></i>
+          </div>
+          <div class="history-item-content">
+            <div class="history-message">{{ getTruncatedMessage(history.user_message, 60) }}</div>
+            <div class="history-time">
+              <i class="far fa-clock"></i> {{ getTimeAgo(history.created_date) }}
+            </div>
+          </div>
+          <div class="history-item-arrow">
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
