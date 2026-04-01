@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "outputDirectory": "/vercel/path0/dist/chat-ui",
+  "outputDirectory": "dist/chat-ui/browser",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
