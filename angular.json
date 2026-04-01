@@ -55,11 +55,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "outputMode": "static"
           },
           "configurations": {
             "production": {
@@ -103,7 +99,9 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "allowedHosts": ["76fd-2409-40f3-2059-9ff9-e174-d9c2-d50f-e65f.ngrok-free.app"]
+            "allowedHosts": [
+              "76fd-2409-40f3-2059-9ff9-e174-d9c2-d50f-e65f.ngrok-free.app"
+            ]
           }
         }
       }
